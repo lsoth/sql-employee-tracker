@@ -24,9 +24,9 @@ const viewDepartments = () => {
         }
     }
     )};
-
+// departments.name AS department, JOIN departments ON roles.department_id=departments.id
 const viewEmployees = () => {
-    db.query("SELECT * FROM employees", (err,data)=>{
+    db.query("SELECT employees.id, employees.first_name, employees.last_name, employees.manager_id, roles.title, roles.salary, roles.department_id, departments.name FROM employees JOIN roles on employees.role_id=roles.id JOIN departments ON roles.department_id=departments.id", (err,data)=>{
         if(err){
             console.log(err)
             db.end();
