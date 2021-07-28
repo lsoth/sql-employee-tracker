@@ -117,33 +117,71 @@ const insertRole = () => {
 })
 };
 
-// const insertEmployee = () => {
-//     inquirer
-//     .prompt([
-//         {
-//             type:"input",
-//             message:"What is the employee's first name?",
-//             name:"first_name"
-//         }
-//     ]).then(answers => {
-//         db.query(`INSERT INTO departments (name) VALUES(?)`,[answers.name]),(err,data) => {
-//             if(err){
-//                 console.log(err);
-//                 db.destroy();
-//             } else {
-//                 console.log("department added!");
-//                 seeDepartments();
-//             }
-//         }
+const insertEmployee = () => {
+    db.query("SELECT * FROM roles", (err,data)=>{
+        if(err){
+            console.log(err)
+            db.end();
+        }else {
+        const inqRoles = data.map( role => {
+            return {
+            name: role.title,
+            value:role.id
+            }
+        });
+    inquirer
+    .prompt([
+        {
+            type:"list",
+            message:"What is the title of the new employee?",
+            choices:inqRoles,
+            name:"role_id"
+        },
+        {
+            type:"input",
+            message:"What is the first name of the new employee?",
+            name:"first_name"
+        },
+        {
+            type:"input",
+            message:"What is the last name of the new employee?",
+            name:"last_name"
+        },
+        {
+            type:"input",
+            message:"What is the last name of the new employee?",
+            name:"last_name"
+        },
+        {
+            type:"input",
+            message:"What is the employee_id for the manager of the new employee? (enter 0 if none)",
+            name:"manager_id"
+        }
 
-//     })
-// };
+    ]).then(answers => {
+        db.query(`INSERT INTO employees (first_name,last_name,role_id, manager_id) VALUES(?,?,?,?)`,
+        [answers.first_name,answers.last_name,answers.role_id,answers.manager_id],(err,data) => {
+            if(err){
+                console.log(err);
+                db.destroy();
+            } else {
+                console.log("employee added!");
+                viewEmployees();
+            }
+        }
+        )
+    });
+}
+})
+};
+
+
 
 const main = () => {
     inquirer
     .prompt({
         type:"list",
-        choices: ["view departments", "view roles", "view employees", "add new department", "add new role", "quit"],
+        choices: ["view departments", "view roles", "view employees", "add new department", "add new role", "add new employees", "quit"],
         message: "what do you want to do?",
         name: "choice"
     })
